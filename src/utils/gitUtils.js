@@ -1,6 +1,5 @@
 import simpleGit from 'simple-git';
-import chalk from "chalk";
-import {logError, logInfo, logSuccess} from "./logger.js";
+import { consola, createConsola } from "consola";
 import {COMMIT_TYPES} from "./constants.js";
 
 const options = {
@@ -13,10 +12,10 @@ const git = simpleGit(options);
 export async function getBranchName(){
     try{
         const status = await git.status()
-        logInfo(chalk.bold('  Current Branch : ') + chalk(status.current))
+        consola.success('Current Branch : ' + status.current)
         return status.current;
     }catch(error){
-        logError('Could not get current branch');
+        consola.error('Could not get current branch');
     }
 }
 
@@ -33,8 +32,6 @@ export async function getDefaults(){
     }
 
     const [ branchname, scope, id, title] = match;
-
-    console.log(scope, id)
 
     if (COMMIT_TYPES.includes(scope)) {
         return {
@@ -55,15 +52,15 @@ export async function appendFiles(){
     try{
         await git.add(['.'])
     }catch (error) {
-        logError(error);
+        consola.error(error);
     }
 }
 
 export async function commitMessage(message){
     try{
         await git.commit(message);
-        logSuccess()
+        consola.success(message);
     }catch (error){
-        logError(error);
+        consola.error(error);
     }
 }
